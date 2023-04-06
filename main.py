@@ -6,9 +6,10 @@ import algoritmo
 import copy
 import time
 import random
-from memory_profiler import profile
+# from memory_profiler import profile
 
 laberinto = Laberinto()
+laberinto.laberintoL1()
 agente = Agente()
 cola = queue.Queue()
 
@@ -26,7 +27,7 @@ agente.maxx, agente.maxy = laberinto.laberinto.shape
 # obtengo las coordenadas que corresponden a la salida
 agente.xob, agente.yob = laberinto.fin
 
-@profile(stream=open('memory_profile.log', 'w+'))
+# @profile(stream=open('memory_profile.log', 'w+'))
 def inicio(laberinto, cola, agente):
     #lista para guardar los estados que ya generaron hijos y evitar ciclos
     trabajados = [] 
