@@ -18,3 +18,10 @@ Se ha de comprobar si el nodo actual o el proximo es una solucion para detener e
 - trata de optimizar el uso de memoria y el costo matematico
 ### Bidireccionales
 - menor costo computacional
+
+
+## Recursos
+Puedes crear un entorno nuevo de conda: ```conda create -n algoritmos_ia python=3.8 ```
+- numba: ```pip install numba```
+
+njit es un decorador de la librería numba de Python que se utiliza para mejorar la velocidad de ejecución de funciones de Python. numba es una librería de compilación Just-In-Time (JIT) que optimiza y acelera el código de Python a través de la compilación en tiempo de ejecución.
