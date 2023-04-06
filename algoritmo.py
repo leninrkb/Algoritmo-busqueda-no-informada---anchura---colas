@@ -2,15 +2,15 @@ import copy
 import numpy as np
 import queue
 
-def generar_estados_posibles(laberinto, agente):
+def generar_estados_posibles(laberinto, agente, verbose=False):
     '''este metodo genera los cuatro estados basicos posibles,
     y retorna una lista con los que se lograron generar. 
     cada agente guarda su gente padre'''
 
-    # conpruebo si el agente ya corresponde a mi
+    # compruebo si el agente ya corresponde a mi
     # funcion objetivo
     if agente.es_funcion_objetivo():
-        imprimir_ruta(agente)
+        imprimir_ruta(agente,1)
         return True
     
     # lista a retornar con los nuevos estados
@@ -31,44 +31,43 @@ def generar_estados_posibles(laberinto, agente):
             # comrpuebo si el movimiento es posible dentro del camino
             # y no es un muro
             if laberinto.laberinto[agente_arriba.posx][agente_arriba.posy] == 1:
-                print(agente_arriba.posx, agente_arriba.posy)
+                if verbose: print(agente_arriba.posx, agente_arriba.posy)
                 agente_arriba.padre = agente
                 lista.append(agente_arriba)
             else:
-                print('se encontro con una pared arriba')
+                if verbose: print('se encontro con una pared arriba')
         else:
-            print('no puede ir mas arriba')
+            if verbose: print('no puede ir mas arriba')
         if agente_abajo.abajo():
             if laberinto.laberinto[agente_abajo.posx][agente_abajo.posy] == 1:
-                print(agente_abajo.posx, agente_abajo.posy)
+                if verbose: print(agente_abajo.posx, agente_abajo.posy)
                 agente_abajo.padre = agente
                 lista.append(agente_abajo)
 
             else:
-                print('se encontro con una pared abajo')
+                if verbose: print('se encontro con una pared abajo')
         else:
-            print('no puede ir mas abajo')
+            if verbose: print('no puede ir mas abajo')
         if agente_izquierda.izquierda():
             if laberinto.laberinto[agente_izquierda.posx][agente_izquierda.posy] == 1:
-                print(agente_izquierda.posx, agente_izquierda.posy)
+                if verbose: print(agente_izquierda.posx, agente_izquierda.posy)
                 agente_izquierda.padre = agente
                 lista.append(agente_izquierda)
 
             else:
-                print('se encontro con una pared a la izquierda')
+                if verbose: print('se encontro con una pared a la izquierda')
         else:
-            print('no puede ir mas izquierda')
+            if verbose: print('no puede ir mas izquierda')
         if agente_derecha.derecha():
             if laberinto.laberinto[agente_derecha.posx][agente_derecha.posy] == 1:
-                print(agente_derecha.posx, agente_derecha.posy)
+                if verbose: print(agente_derecha.posx, agente_derecha.posy)
                 agente_derecha.padre = agente
                 lista.append(agente_derecha)
 
             else:
-                print('se encontro con una pared a la derecha')
+                if verbose: print('se encontro con una pared a la derecha')
         else:
-            print('no puede ir mas derecha')
-        print('\n')
+            if verbose: print('no puede ir mas derecha')
         return lista
     else:
         return None
@@ -89,12 +88,13 @@ def es_repetido(agente, trabajados):
             return True
     return False
 
-def imprimir_ruta(agente):
+def imprimir_ruta(agente, i):
     ''' imprime la ruta del agente que llego al objetivo '''
     if agente == None:
         return
-    print(f'posicion x: {agente.posx} - posicion y: {agente.posy}')
-    imprimir_ruta(agente.padre)
+    print(f'No.{i} - {agente.posx}, {agente.posy}')
+    i+=1
+    imprimir_ruta(agente.padre, i)
 
 def control_flujo(resp, cola, trabajados):
     if resp == True:
@@ -106,3 +106,12 @@ def control_flujo(resp, cola, trabajados):
     else:
         print('spawneado imposible')
         return False
+    
+def mapear_camino(laberinto):
+    xlen, ylen = laberinto.laberinto.shape
+    mapa_laberinto = []
+    for i in range(xlen):
+        for j in range(ylen):
+            if laberinto.laberinto[i][j] == 1:
+                mapa_laberinto.append((i,j))
+    return mapa_laberinto

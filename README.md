@@ -25,3 +25,7 @@ Puedes crear un entorno nuevo de conda: ```conda create -n algoritmos_ia python=
 - numba: ```pip install numba```
 
 njit es un decorador de la librería numba de Python que se utiliza para mejorar la velocidad de ejecución de funciones de Python. numba es una librería de compilación Just-In-Time (JIT) que optimiza y acelera el código de Python a través de la compilación en tiempo de ejecución.
+
+- memory_profiler: ```pip install memory_profiler```
+
+Este módulo proporciona una forma sencilla de medir el uso de memoria de una función en particular.

@@ -1,0 +1,48 @@
+Filename: main.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    29     33.1 MiB     33.1 MiB           1   @profile(stream=open('memory_profile.log', 'w+'))
+    30                                         def inicio(laberinto, cola, agente):
+    31                                             #lista para guardar los estados que ya generaron hijos y evitar ciclos
+    32     33.1 MiB      0.0 MiB           1       trabajados = [] 
+    33                                         
+    34     33.1 MiB      0.0 MiB           1       total_nodos = 1
+    35                                         
+    36                                             # genero los primeros estados a partir del nodo inicial
+    37     33.1 MiB      0.0 MiB           1       resp = algoritmo.generar_estados_posibles(laberinto, agente)
+    38     33.1 MiB      0.0 MiB           1       if isinstance(resp, list): 
+    39     33.1 MiB      0.0 MiB           1           total_nodos += len(resp)
+    40                                         
+    41     33.1 MiB      0.0 MiB           1       algoritmo.control_flujo(resp, cola, trabajados)
+    42                                         
+    43     33.1 MiB      0.0 MiB           1       total = 0
+    44     33.1 MiB      0.0 MiB          31       while not cola.empty():
+    45     33.1 MiB      0.0 MiB          31           inicio = time.time()
+    46                                         
+    47                                                 # obtiene el agente y lo elimina de la cola
+    48     33.1 MiB      0.0 MiB          31           agente = cola.get() 
+    49                                         
+    50                                                 # registro el agente en la lista de trabajados para no volver 
+    51                                                 # a tomarlos en cuenta
+    52     33.1 MiB      0.0 MiB          31           trabajados.append(copy.copy(agente))
+    53                                         
+    54                                                 # genero los estados posibles del agente
+    55     33.1 MiB      0.0 MiB          31           resp = algoritmo.generar_estados_posibles(laberinto, agente)
+    56     33.1 MiB      0.0 MiB          31           if isinstance(resp, list): 
+    57     33.1 MiB      0.0 MiB          30               total_nodos += len(resp)
+    58                                         
+    59                                         
+    60                                                 # controlo las acciones posteriores
+    61     33.1 MiB      0.0 MiB          31           if algoritmo.control_flujo(resp, cola, trabajados):
+    62     33.1 MiB      0.0 MiB           1               break
+    63                                                 
+    64     33.1 MiB      0.0 MiB          30           fin = time.time()
+    65     33.1 MiB      0.0 MiB          30           sub_total = fin - inicio
+    66     33.1 MiB      0.0 MiB          30           total += sub_total
+    67     33.1 MiB      0.0 MiB          30           print(f'tiempo por una ejecucion completa del agente: {sub_total} segundos \n')
+    68                                         
+    69     33.1 MiB      0.0 MiB           1       print(f'tiempo total de la ejecucion: {total} segundos')
+    70     33.1 MiB      0.0 MiB           1       print(f'nodos generados: {total_nodos}')
+
+
