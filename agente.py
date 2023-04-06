@@ -16,13 +16,13 @@ class Agente:
         return False
     def abajo(self):
         aux = self.posx + 1
-        if aux <= self.maxx:
+        if aux < self.maxx:
             self.posx = aux
             return True
         return False
     def derecha(self):
         aux = self.posy + 1
-        if aux <= self.maxy:
+        if aux < self.maxy:
             self.posy = aux
             return True
         return False
