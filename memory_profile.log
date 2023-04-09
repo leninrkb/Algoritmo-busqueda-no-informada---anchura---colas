@@ -2,47 +2,49 @@ Filename: main.py
 
 Line #    Mem usage    Increment  Occurrences   Line Contents
 =============================================================
-    30     33.4 MiB     33.4 MiB           1   @profile(stream=open('memory_profile.log', 'w+'))
-    31                                         def inicio(laberinto, cola, agente):
-    32                                             #lista para guardar los estados que ya generaron hijos y evitar ciclos
-    33     33.4 MiB      0.0 MiB           1       trabajados = [] 
-    34                                         
-    35     33.4 MiB      0.0 MiB           1       total_nodos = 1
-    36                                         
-    37                                             # genero los primeros estados a partir del nodo inicial
-    38     33.4 MiB      0.0 MiB           1       resp = algoritmo.generar_estados_posibles(laberinto, agente)
-    39     33.4 MiB      0.0 MiB           1       if isinstance(resp, list): 
-    40     33.4 MiB      0.0 MiB           1           total_nodos += len(resp)
-    41                                         
-    42     33.4 MiB      0.0 MiB           1       algoritmo.control_flujo(resp, cola, trabajados)
-    43                                         
-    44     33.4 MiB      0.0 MiB           1       total = 0
-    45     33.4 MiB      0.0 MiB          32       while not cola.empty():
-    46     33.4 MiB      0.0 MiB          32           inicio = time.time()
-    47                                         
-    48                                                 # obtiene el agente y lo elimina de la cola
-    49     33.4 MiB      0.0 MiB          32           agente = cola.get() 
+    32     33.1 MiB     33.1 MiB           1   @profile(stream=open('memory_profile.log', 'w+'))
+    33                                         def inicio(laberinto, cola, agente):
+    34                                             #agente aqui es semilla!!!!
+    35                                             #lista para guardar los estados que ya generaron hijos y evitar ciclos
+    36     33.1 MiB      0.0 MiB           1       trabajados = [] 
+    37     33.1 MiB      0.0 MiB           1       total_nodos = 1
+    38                                             # genero los primeros estados a partir del nodo inicial
+    39     33.1 MiB      0.0 MiB           1       respuesta = algoritmo.generar_estados_posibles(laberinto, agente)
+    40     33.1 MiB      0.0 MiB           1       if isinstance(respuesta, list): 
+    41     33.1 MiB      0.0 MiB           1           total_nodos += len(respuesta)
+    42                                         
+    43                                             # aqui llamo a agregar_cola()
+    44                                             # cola aqui se pasa como referencia de la original
+    45     33.1 MiB      0.0 MiB           1       algoritmo.control_flujo(respuesta, cola, trabajados) 
+    46                                         
+    47     33.1 MiB      0.0 MiB           1       total_tiempo = 0
+    48     33.1 MiB      0.0 MiB          32       while not cola.empty():
+    49     33.1 MiB      0.0 MiB          32           inicio = time.time()
     50                                         
-    51                                                 # registro el agente en la lista de trabajados para no volver 
-    52                                                 # a tomarlos en cuenta
-    53     33.4 MiB      0.0 MiB          32           trabajados.append(copy.copy(agente))
-    54                                         
-    55                                                 # genero los estados posibles del agente
-    56     33.4 MiB      0.0 MiB          32           resp = algoritmo.generar_estados_posibles(laberinto, agente)
-    57     33.4 MiB      0.0 MiB          32           if isinstance(resp, list): 
-    58     33.4 MiB      0.0 MiB          31               total_nodos += len(resp)
-    59                                         
-    60                                         
-    61                                                 # controlo las acciones posteriores
-    62     33.4 MiB      0.0 MiB          32           if algoritmo.control_flujo(resp, cola, trabajados):
-    63     33.4 MiB      0.0 MiB           1               break
-    64                                                 
-    65     33.4 MiB      0.0 MiB          31           fin = time.time()
-    66     33.4 MiB      0.0 MiB          31           sub_total = fin - inicio
-    67     33.4 MiB      0.0 MiB          31           total += sub_total
-    68     33.4 MiB      0.0 MiB          31           print(f'tiempo por una ejecucion completa del agente: {sub_total} segundos \n')
-    69                                         
-    70     33.4 MiB      0.0 MiB           1       print(f'tiempo total de la ejecucion: {total} segundos')
-    71     33.4 MiB      0.0 MiB           1       print(f'nodos generados: {total_nodos}')
+    51                                                 # obtiene el agente y lo elimina de la cola FIFO!!!
+    52     33.1 MiB      0.0 MiB          32           agente = cola.get() 
+    53                                         
+    54                                                 # registro el agente en la lista de trabajados para no volver 
+    55                                                 # a tomarlos en cuenta
+    56     33.1 MiB      0.0 MiB          32           trabajados.append(copy.copy(agente))
+    57                                         
+    58                                                 # genero los estados posibles del agente
+    59     33.1 MiB      0.0 MiB          32           respuesta = algoritmo.generar_estados_posibles(laberinto, agente)
+    60                                                 #compruebo q sea una lista para poder contar los nodos
+    61     33.1 MiB      0.0 MiB          32           if isinstance(respuesta, list): 
+    62     33.1 MiB      0.0 MiB          31               total_nodos += len(respuesta)
+    63                                         
+    64                                         
+    65                                                 # controlo las acciones posteriores, agrego ? termino ? hay solucion ?
+    66     33.1 MiB      0.0 MiB          32           if algoritmo.control_flujo(respuesta, cola, trabajados):
+    67     33.1 MiB      0.0 MiB           1               break
+    68                                                 
+    69     33.1 MiB      0.0 MiB          31           fin = time.time()
+    70     33.1 MiB      0.0 MiB          31           sub_total_tiempo = fin - inicio # tiempo de cada nodo
+    71     33.1 MiB      0.0 MiB          31           total_tiempo += sub_total_tiempo
+    72     33.1 MiB      0.0 MiB          31           print(f'tiempo por una ejecucion completa del agente: {sub_total_tiempo} segundos \n')
+    73                                         
+    74     33.1 MiB      0.0 MiB           1       print(f'tiempo total de la ejecucion: {total_tiempo} segundos')
+    75     33.1 MiB      0.0 MiB           1       print(f'nodos generados: {total_nodos}')
 
 

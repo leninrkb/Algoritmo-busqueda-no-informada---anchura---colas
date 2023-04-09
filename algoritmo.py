@@ -1,6 +1,10 @@
 import copy
 import numpy as np
-import queue
+import logging #para usar y crear un archivo log
+
+np.set_printoptions(linewidth=200)
+#configuracion basica para usar loggin
+logging.basicConfig(filename='resultado.log', level=logging.INFO, filemode='w')
 
 def generar_estados_posibles(laberinto, agente, verbose=False):
     '''este metodo genera los cuatro estados basicos posibles,
@@ -10,16 +14,19 @@ def generar_estados_posibles(laberinto, agente, verbose=False):
     # compruebo si el agente ya corresponde a mi
     # funcion objetivo
     if agente.es_funcion_objetivo():
-        imprimir_ruta(agente,1)
+        ruta = recuperar_ruta(agente,[])
+        imprimir_ruta(ruta, laberinto)
+        logging.info('esta es la ruta:')
+        logging.info(ruta)
         return True
     
-    # lista a retornar con los nuevos estados
-    lista = []
+    # lista a retornar con los nuevos agentes
+    estados_posibles = []
     
-    # compruebo si ela gente aparecio en un lugar psible en el
+    # compruebo si el a gente aparecio en un lugar posible en el
     # laberinto
     if laberinto.laberinto[agente.posx][agente.posy] == 1:
-        # genera una copia del padre para generar los estados
+        # genera una copia del padre para generar los agenets hijos
         agente_arriba = copy.copy(agente)
         agente_abajo = copy.copy(agente)
         agente_izquierda = copy.copy(agente)
@@ -27,13 +34,13 @@ def generar_estados_posibles(laberinto, agente, verbose=False):
 
         # compruebo si el movimiento a realizar esta dentro del laberinto
         if agente_arriba.arriba():
-
             # comrpuebo si el movimiento es posible dentro del camino
             # y no es un muro
             if laberinto.laberinto[agente_arriba.posx][agente_arriba.posy] == 1:
                 if verbose: print(agente_arriba.posx, agente_arriba.posy)
+                # es camino y no se sale de los limites, entonces agrego
                 agente_arriba.padre = agente
-                lista.append(agente_arriba)
+                estados_posibles.append(agente_arriba)
             else:
                 if verbose: print('se encontro con una pared arriba')
         else:
@@ -42,7 +49,7 @@ def generar_estados_posibles(laberinto, agente, verbose=False):
             if laberinto.laberinto[agente_abajo.posx][agente_abajo.posy] == 1:
                 if verbose: print(agente_abajo.posx, agente_abajo.posy)
                 agente_abajo.padre = agente
-                lista.append(agente_abajo)
+                estados_posibles.append(agente_abajo)
 
             else:
                 if verbose: print('se encontro con una pared abajo')
@@ -52,7 +59,7 @@ def generar_estados_posibles(laberinto, agente, verbose=False):
             if laberinto.laberinto[agente_izquierda.posx][agente_izquierda.posy] == 1:
                 if verbose: print(agente_izquierda.posx, agente_izquierda.posy)
                 agente_izquierda.padre = agente
-                lista.append(agente_izquierda)
+                estados_posibles.append(agente_izquierda)
 
             else:
                 if verbose: print('se encontro con una pared a la izquierda')
@@ -62,19 +69,20 @@ def generar_estados_posibles(laberinto, agente, verbose=False):
             if laberinto.laberinto[agente_derecha.posx][agente_derecha.posy] == 1:
                 if verbose: print(agente_derecha.posx, agente_derecha.posy)
                 agente_derecha.padre = agente
-                lista.append(agente_derecha)
+                estados_posibles.append(agente_derecha)
 
             else:
                 if verbose: print('se encontro con una pared a la derecha')
         else:
             if verbose: print('no puede ir mas derecha')
-        return lista
+        return estados_posibles
     else:
         return None
 
 
 def agregar_agentes_cola(cola, lista_agentes, trabajados):
     ''' agrega una lista de agentes a la cola '''
+    #tengo que verificar si es repetido o no para poder agregar a la cola
     for agente in lista_agentes:
         if es_repetido(agente, trabajados):
             continue
@@ -88,20 +96,35 @@ def es_repetido(agente, trabajados):
             return True
     return False
 
-def imprimir_ruta(agente, i):
+
+def recuperar_ruta(agente, ruta):
     ''' imprime la ruta del agente que llego al objetivo '''
     if agente == None:
-        return
-    print(f'No.{i} - {agente.posx}, {agente.posy}')
-    i+=1
-    imprimir_ruta(agente.padre, i)
+        return ruta
+    ruta.append((agente.posx,agente.posy))
+    return recuperar_ruta(agente.padre, ruta)
+
+def imprimir_ruta(ruta, laberinto):
+   
+
+    xlen , ylen = laberinto.laberinto.shape
+    #creo una matriz de las miams dimensiones que lab
+    laberinto_resuelto = np.empty((xlen,ylen), dtype=object) 
+    # relleno esa matriz con ''
+    laberinto_resuelto[:] = ' '
+    # pongo 1 en el camino hacia la salida conforme a la ruta recuperada
+    for posx, posy in ruta:
+        laberinto_resuelto[posx, posy] = '1'
+
+    #imprimo en el archivo resultado.log
+    logging.info(laberinto_resuelto)
 
 def control_flujo(resp, cola, trabajados):
     if resp == True:
         print('--- solucion encontrada ---')
         return True
     elif not resp == None:
-        agregar_agentes_cola(cola,resp, trabajados)
+        agregar_agentes_cola(cola, resp, trabajados)
         return False
     else:
         print('spawneado imposible')
@@ -109,9 +132,10 @@ def control_flujo(resp, cola, trabajados):
     
 def mapear_camino(laberinto):
     xlen, ylen = laberinto.laberinto.shape
-    mapa_laberinto = []
+    camino_laberinto = []
     for i in range(xlen):
         for j in range(ylen):
-            if laberinto.laberinto[i][j] == 1:
-                mapa_laberinto.append((i,j))
-    return mapa_laberinto
+            lab = laberinto.laberinto[i][j]
+            if lab == 1:
+                camino_laberinto.append((i,j)) #agrego la tupla con las coordenadas
+    return camino_laberinto
