@@ -4,7 +4,9 @@ import logging #para usar y crear un archivo log
 
 np.set_printoptions(linewidth=200)
 #configuracion basica para usar loggin
-logging.basicConfig(filename='resultado.log', level=logging.INFO, filemode='w')
+logging.basicConfig(filename='resultado.log', level=logging.INFO, filemode='w', format='%(levelname)s:%(name)s:\n%(message)s')
+
+
 
 def generar_estados_posibles(laberinto, agente, verbose=False):
     '''este metodo genera los cuatro estados basicos posibles,

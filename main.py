@@ -5,7 +5,7 @@ import algoritmo #script
 import copy
 import time
 import random
-# from memory_profiler import profile
+from memory_profiler import profile
 
 laberinto = Laberinto()
 laberinto.laberintoL2()
@@ -30,7 +30,7 @@ agente.maxx, agente.maxy = laberinto.laberinto.shape
 # obtengo las coordenadas que corresponden a la salida
 agente.xob, agente.yob = laberinto.fin
 
-# @profile(stream=open('memory_profile.log', 'w+'))
+@profile(stream=open('memory_profile.log', 'w+'))
 def inicio(laberinto, cola, agente):
     #agente aqui es semilla!!!!
     #lista para guardar los estados que ya generaron hijos y evitar ciclos
