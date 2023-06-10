@@ -8,7 +8,7 @@ import random
 from memory_profiler import profile
 
 laberinto = Laberinto()
-laberinto.laberintoL2()
+laberinto.laberintoL1()
 agente = Agente()
 cola = queue.Queue()
 
@@ -38,6 +38,7 @@ def inicio(laberinto, cola, agente):
     total_nodos = 1
     # genero los primeros estados a partir del nodo inicial
     respuesta = algoritmo.generar_estados_posibles(laberinto, agente)
+    
     if isinstance(respuesta, list): 
         total_nodos += len(respuesta)
 
@@ -50,7 +51,7 @@ def inicio(laberinto, cola, agente):
         inicio = time.time()
 
         # obtiene el agente y lo elimina de la cola FIFO!!!
-        agente = cola.get() 
+        agente = cola.get()
 
         # registro el agente en la lista de trabajados para no volver 
         # a tomarlos en cuenta
